@@ -1,25 +1,43 @@
 package com.moondroid.ex_paging.presentation.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.moondroid.ex_paging.R
-import com.moondroid.ex_paging.common.Constant
-import com.moondroid.ex_paging.network.MyRetrofit
-import com.moondroid.ex_paging.network.RetrofitExService
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.moondroid.ex_paging.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    private var _binding: ActivityMainBinding? = null
+    private val binding: ActivityMainBinding get() = _binding!!
+
     private val viewModel: MainViewModel by viewModels()
+
+    private val mContext by lazy { this }
+
+    private val adapter = PagingAdapter()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        viewModel.getData()
+        binding.recycler.layoutManager = LinearLayoutManager(mContext, RecyclerView.VERTICAL, false)
+        binding.recycler.adapter = adapter
+
+        lifecycleScope.launch {
+            viewModel.getData().collectLatest {
+                adapter.submitData(it)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }
