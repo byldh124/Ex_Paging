@@ -1,10 +1,10 @@
-package com.moondroid.ex_paging.network
+package com.moondroid.ex_paging.data
 
 import com.moondroid.ex_paging.data.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface RetrofitExService {
+interface ApiService {
     @GET("getMolitStatList")
     suspend fun getData(
         @Query("serviceKey") serviceKey: String,

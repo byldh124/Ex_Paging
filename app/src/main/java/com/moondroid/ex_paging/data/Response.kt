@@ -7,7 +7,7 @@ data class Response(
     var currentCount: Int,
     var pageNo: Int,
     var perPage: Int,
-    var data: List<Data>,
+    var data: List<Data> = emptyList(),
 )
 
 
